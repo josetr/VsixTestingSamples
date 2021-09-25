@@ -5,9 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Madskristensen.VisualStudio.SDK">
-      <Version>14.0.81-pre</Version>
-    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.0.0-previews-5-31722-452" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26201" />
   </ItemGroup>
 
 </Project>

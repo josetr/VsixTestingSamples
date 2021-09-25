@@ -9,7 +9,7 @@ namespace VsAsyncPackage.Tests
 {
     public class AsyncPackageTests
     {
-        [VsTheory(Version = "2015-")]
+        [VsTheory(Version = "2017-")]
         [InlineData(VSPackage.PackageGuidString, true)]
         [InlineData("11111111-2222-3333-4444-555555555555", false)]
         async Task LoadTestAsync(string guidString, bool expectedSuccess)
