@@ -1,0 +1,37 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    strategy:
+      matrix:
+        os: ["windows-2016", "windows-2019", "windows-2022"]
+
+    runs-on: ${{ matrix.os }}
+    env:
+      CONFIGURATION: Release
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Add msbuild to PATH
+        if: ${{ !endsWith(matrix.os, '2022') }}
+        uses: microsoft/setup-msbuild@v1.0.3
+
+      - name: Add msbuild to PATH - 2022
+        if: ${{ endsWith(matrix.os, '2022') }}
+        run: echo "C:/Program Files/Microsoft Visual Studio/2022/Preview/Msbuild/Current/Bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Build
+        run: Get-ChildItem "**/*.sln" | Foreach { msbuild $_.FullName -restore }
+
+      - name: Test
+        run: |
+          $versions = 15, 16, 17
+          $version = (Get-Item "$((Split-Path (Get-Command msbuild).Path)))/../../../Common7/IDE/devenv.exe").VersionInfo.FileMajorPart          
+          $versions = $versions -ne $version
+          $filter = ($versions | % { "FullyQualifiedName!~TestMethod"+$_ }) -Join "&"
+          dotnet test **/bin/$ENV:CONFIGURATION/*/*.Tests.dll --filter $filter        
